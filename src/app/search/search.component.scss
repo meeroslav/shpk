@@ -1,0 +1,20 @@
+:host {
+  position: relative;
+  display: block;
+
+  border: 2px solid tomato;
+}
+
+input[type=search] {
+  width: 100%;
+}
+
+.search-details {
+  position: absolute;
+
+  background: tomato;
+}
+
+agm-map {
+  height: 10rem;
+}

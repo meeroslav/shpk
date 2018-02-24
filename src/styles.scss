@@ -1,2 +1,13 @@
-/* You can add global styles to this file, and also import other style files */
+// local variables
+@import 'styles/variables';
 
+// import bootstrap grid
+@import 'styles/reset';
+@import '../node_modules/bootstrap/scss/bootstrap-grid';
+@import '../node_modules/bootstrap/scss/utilities/spacing';
+@import 'styles/mixins';
+@import 'styles/theme';
+
+html {
+  background: $shpk-primary;
+}

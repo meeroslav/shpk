@@ -1,0 +1,79 @@
+<form [formGroup]="searchForm" *ngIf="searchForm" (ngSubmit)="onSubmit()" novalidate>
+  <input type="search" formControlName="search" placeholder="{{ 'TYPE_TO_SEARCH' | translate }}"/>
+  <div *ngIf="showDetails" class="search-details">
+    <div class="row">
+      <div class="col-12">{{ 'LISTED_IN' | translate }}</div>
+    </div>
+    <div class="row">
+      <div class="col-12">{{ 'SORT_BY' | translate }}</div>
+      <div class="col-6" *ngFor="let sortType of allSortTypes">
+        <input type="radio" formControlName="sortBy"
+               [value]="sortType"/>
+        {{ sortType | translate }}
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">{{ 'RADIUS' | translate }}</div>
+    </div>
+    <div class="row">
+      <div class="col-12">{{ 'CURRENT_LOCATION' | translate }}</div>
+      <div class="col-12">
+        <agm-map
+          [latitude]="searchForm.controls['latitude'].value"
+          [longitude]="searchForm.controls['longitude'].value">
+          <agm-marker
+            [latitude]="searchForm.controls['latitude'].value"
+            [longitude]="searchForm.controls['longitude'].value"
+            [markerDraggable]="true"
+            (dragEnd)="markerDragEnd($event)"
+          >
+          </agm-marker>
+          <agm-circle [latitude]="searchForm.controls['latitude'].value"
+                      [longitude]="searchForm.controls['longitude'].value"
+                      [radius]="searchForm.controls['radius'].value * 1000"
+                      [fillColor]="'red'">
+          </agm-circle>
+        </agm-map>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <input type="checkbox" formControlName="onlyMyCountry" />
+        {{ 'IN_MY_COUNTRY' | translate }}
+      </div>
+    </div>
+    <!-- CATEGORY -->
+    <div class="row" formGroupName="categories">
+      <div class="col-12">{{ 'CATEGORY' | translate }}</div>
+      <div class="col-6" *ngFor="let category of allCategories">
+        <input type="checkbox" [formControlName]="category"
+               [value]="category"/>
+        {{ category | translate }}
+      </div>
+    </div>
+    <!-- PRICE RANGE -->
+    <div class="row">
+      <div class="col-12">{{ 'PRICE_RANGE' | translate }}</div>
+      <div class="col-6">
+        <input formControlName="minPrice" type="number"
+             placeholder="{{ 'MIN_PRICE' | translate }}"/>
+      </div>
+      <div class="col-6">
+        <input formControlName="maxPrice" type="number"
+             placeholder="{{ 'MAX_PRICE' | translate }}"/>
+      </div>
+    </div>
+    <!--Date... Listed in the last... 24h, 3d, 7d, 30d, forever-->
+    <!--Sort... Sort by... Distance, Date, Price up, Price down-->
+    <!--Target... Radius... 1, 2, 3, 4, 5, 7, 10, 20, 30, 60, 100, 200, 300, 400, 500, 1000, everywhere-->
+    <!--Flag... search only in my country true/false-->
+    <!--Point... Current location -> map-->
+    <!--Brand... Choose category... All, Fashion, Electronics, Sport, Cars, Services, New, Home, Baby, Movies, Property, Other-->
+    <!--Card... Set your price range... min->max-->
+    <div class="row">
+      <div class="col-12">
+        <button type="submit">Apply</button>
+      </div>
+    </div>
+  </div>
+</form>

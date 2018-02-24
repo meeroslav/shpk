@@ -1,0 +1,14 @@
+{
+  "TYPE_TO_SEARCH": "Type to search...",
+  "LOGO_ALT_TEXT": "Shpock logo",
+
+  "LISTED_IN": "Listed in:",
+  "SORT_BY": "Sort by:",
+  "RADIUS": "Radius:",
+  "CURRENT_LOCATION": "Current location:",
+  "IN_MY_COUNTRY": "Search only in my country",
+  "CATEGORY": "Categories",
+  "PRICE_RANGE": "Price range:",
+  "MIN_PRICE": "Min price",
+  "MAX_PRICE": "Max price"
+}
