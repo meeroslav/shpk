@@ -2,8 +2,8 @@
 
 @include mat-core();
 
-$custom-theme-primary: mat-palette($mat-light-green);
-$custom-theme-accent: mat-palette($mat-orange, A200, A100, A400);
+$custom-theme-primary: mat-palette($mat-gray);
+$custom-theme-accent: mat-palette($mat-green, 500, 200, 800);
 $custom-theme-warn: mat-palette($mat-red);
 
 $custom-theme: mat-light-theme($custom-theme-primary, $custom-theme-accent, $custom-theme-warn);
@@ -19,17 +19,23 @@ html {
   font-family: $mat-font-family;
 }
 
-.theme-search {
-  .mat-input-wrapper {
-    background: white;
-  }
-  .mat-form-field-wrapper {
-    padding: 0;
-  }
-  .mat-form-field-underline {
-    bottom: 0;
-  }
-  &.mat-form-field {
-    display: block;
-  }
+/********************************
+ NOT MATERIAL STYLES
+********************************/
+
+html {
+  background: $shpk-background;
+  color: $shpk-text-color;
+}
+
+button {
+  background: $shpk-background;
+  border: 1px solid $shpk-border-color;
+  color: $shpk-foreground;
+  padding: $spacer;
+}
+
+input {
+  border: 1px solid $shpk-border-color;
+  padding: $spacer / 2;
 }

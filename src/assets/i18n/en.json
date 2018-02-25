@@ -2,13 +2,40 @@
   "TYPE_TO_SEARCH": "Type to search...",
   "LOGO_ALT_TEXT": "Shpock logo",
 
-  "LISTED_IN": "Listed in:",
-  "SORT_BY": "Sort by:",
-  "RADIUS": "Radius:",
-  "CURRENT_LOCATION": "Current location:",
+  "LISTED_IN": "Listed in the last",
+  "SORT_BY": "Sort by",
+  "RADIUS": "Radius",
+  "CURRENT_LOCATION": "Current location",
   "IN_MY_COUNTRY": "Search only in my country",
   "CATEGORY": "Categories",
-  "PRICE_RANGE": "Price range:",
+  "PRICE_RANGE": "Price range",
   "MIN_PRICE": "Min price",
-  "MAX_PRICE": "Max price"
+  "MAX_PRICE": "Max price",
+
+  "LISTED_IN_24h": "24h",
+  "LISTED_IN_3d": "3d",
+  "LISTED_IN_7d": "7d",
+  "LISTED_IN_30d": "30d",
+  "LISTED_IN_Forever": "Forever",
+
+  "KM": "km",
+  "EVERYWHERE": "Everywhere",
+
+  "SORT_Distance": "Distance",
+  "SORT_Date": "Date",
+  "SORT_PriceAsc": "Price Up",
+  "SORT_PriceDesc": "Price Down",
+
+  "CAT_All": "All",
+  "CAT_FashionAccessories": "Fashion and Accessories",
+  "CAT_Electronics": "Electronics",
+  "CAT_SportLeisureGames": "Sport, Leisure and Games",
+  "CAT_CarsMotors": "Cars and Motors",
+  "CAT_Services": "Services",
+  "CAT_New": "New",
+  "CAT_HomeGarden": "Home and Garden",
+  "CAT_BabyChild": "Baby and Child",
+  "CAT_MoviesBooksMusic": "Movies, Books and Music",
+  "CAT_Property": "Property",
+  "CAT_Other": "Other"
 }

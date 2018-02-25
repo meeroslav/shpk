@@ -1,22 +1,76 @@
 <form [formGroup]="searchForm" *ngIf="searchForm" (ngSubmit)="onSubmit()" novalidate>
-  <input type="search" formControlName="search" placeholder="{{ 'TYPE_TO_SEARCH' | translate }}"/>
-  <div *ngIf="showDetails" class="search-details">
-    <div class="row">
-      <div class="col-12">{{ 'LISTED_IN' | translate }}</div>
+  <div class="row search-block">
+    <i class="icon-search helper-icon col-auto"></i>
+    <div class="col">
+      <input type="search" formControlName="search" placeholder="{{ 'TYPE_TO_SEARCH' | translate }}"/>
     </div>
+  </div>
+  <div *ngIf="showDetails" class="search-details">
+    <!-- LISTED IN -->
     <div class="row">
-      <div class="col-12">{{ 'SORT_BY' | translate }}</div>
-      <div class="col-6" *ngFor="let sortType of allSortTypes">
-        <input type="radio" formControlName="sortBy"
-               [value]="sortType"/>
-        {{ sortType | translate }}
+      <i class="icon-calendar helper-icon col-auto"></i>
+      <div class="col">{{ 'LISTED_IN' | translate }}</div>
+      <div class="col-auto">{{ ('LISTED_IN_' + listedInArray[searchForm.controls['listedIn'].value]) | translate }}</div>
+    </div>
+    <section class="row">
+      <i class="icon-egg helper-icon col-auto"></i>
+      <mat-slider min="0" [max]="listedInMax" step="1" class="col" formControlName="listedIn"></mat-slider>
+      <i class="icon-dinosaur helper-icon col-auto"></i>
+    </section>
+    <div class="search-details-divider"></div>
+    <!-- SORT BY -->
+    <div class="row">
+      <i class="icon-swap helper-icon col-auto"></i>
+      <div class="col">{{ 'SORT_BY' | translate }}</div>
+    </div>
+    <section>
+      <mat-radio-group class="row" formControlName="sortBy">
+        <mat-radio-button class="col-6" [value]="sortType.Distance">
+          {{ ('SORT_' + sortType.Distance) | translate }}
+        </mat-radio-button>
+        <mat-radio-button class="col-6" [value]="sortType.Date">
+          {{ ('SORT_' + sortType.Date) | translate }}
+        </mat-radio-button>
+        <mat-radio-button class="col-6" [value]="sortType.PriceAsc">
+          {{ ('SORT_' + sortType.PriceAsc) | translate }}
+          <i class="icon-circle-down helper-icon"></i>
+        </mat-radio-button>
+        <mat-radio-button class="col-6" [value]="sortType.PriceDesc">
+          {{ ('SORT_' + sortType.PriceDesc) | translate }}
+          <i class="icon-circle-up helper-icon"></i>
+        </mat-radio-button>
+      </mat-radio-group>
+    </section>
+    <div class="search-details-divider"></div>
+    <!-- RADIUS -->
+    <div class="row">
+      <i class="icon-radio-checked helper-icon col-auto"></i>
+      <div class="col">{{ 'RADIUS' | translate }}</div>
+      <div class="col-auto">{{
+        radiusArray[searchForm.controls['radius'].value] ?
+        radiusArray[searchForm.controls['radius'].value] + ('KM' | translate) :
+        ('EVERYWHERE' | translate) }}
       </div>
     </div>
+    <section class="row">
+      <i class="icon-home helper-icon col-auto"></i>
+      <mat-slider min="0" [max]="radiusMax" step="1" class="col" formControlName="radius"></mat-slider>
+      <i class="icon-earth helper-icon col-auto"></i>
+    </section>
+    <section class="row">
+      <i class="icon-flag helper-icon col-auto"></i>
+      <div class="col">{{ 'IN_MY_COUNTRY' | translate }}</div>
+      <div class="col-auto">
+        <mat-slide-toggle formControlName="onlyMyCountry"></mat-slide-toggle>
+      </div>
+    </section>
+    <div class="search-details-divider"></div>
+    <!-- MAP -->
     <div class="row">
-      <div class="col-12">{{ 'RADIUS' | translate }}</div>
+      <i class="icon-location helper-icon col-auto"></i>
+      <div class="col">{{ 'CURRENT_LOCATION' | translate }}</div>
     </div>
     <div class="row">
-      <div class="col-12">{{ 'CURRENT_LOCATION' | translate }}</div>
       <div class="col-12">
         <agm-map
           [latitude]="searchForm.controls['latitude'].value"
@@ -31,29 +85,32 @@
           <agm-circle [latitude]="searchForm.controls['latitude'].value"
                       [longitude]="searchForm.controls['longitude'].value"
                       [radius]="searchForm.controls['radius'].value * 1000"
-                      [fillColor]="'red'">
+                      [fillColor]="'#4ab765'">
           </agm-circle>
         </agm-map>
       </div>
     </div>
-    <div class="row">
-      <div class="col-12">
-        <input type="checkbox" formControlName="onlyMyCountry" />
-        {{ 'IN_MY_COUNTRY' | translate }}
-      </div>
-    </div>
+    <div class="search-details-divider"></div>
     <!-- CATEGORY -->
-    <div class="row" formGroupName="categories">
-      <div class="col-12">{{ 'CATEGORY' | translate }}</div>
-      <div class="col-6" *ngFor="let category of allCategories">
-        <input type="checkbox" [formControlName]="category"
-               [value]="category"/>
-        {{ category | translate }}
-      </div>
+    <div class="row">
+      <i class="icon-brand helper-icon col-auto"></i>
+      <div class="col">{{ 'CATEGORY' | translate }}</div>
     </div>
+    <section class="row" formGroupName="categories">
+      <div class="col-6" *ngFor="let category of allCategories">
+        <mat-checkbox [formControlName]="category"
+               [value]="category">
+          {{ ('CAT_' + category) | translate }}
+        </mat-checkbox>
+      </div>
+    </section>
+    <div class="search-details-divider"></div>
     <!-- PRICE RANGE -->
     <div class="row">
-      <div class="col-12">{{ 'PRICE_RANGE' | translate }}</div>
+      <i class="icon-wallet helper-icon col-auto"></i>
+      <div class="col">{{ 'PRICE_RANGE' | translate }}</div>
+    </div>
+    <section class="row">
       <div class="col-6">
         <input formControlName="minPrice" type="number"
              placeholder="{{ 'MIN_PRICE' | translate }}"/>
@@ -62,16 +119,11 @@
         <input formControlName="maxPrice" type="number"
              placeholder="{{ 'MAX_PRICE' | translate }}"/>
       </div>
-    </div>
-    <!--Date... Listed in the last... 24h, 3d, 7d, 30d, forever-->
-    <!--Sort... Sort by... Distance, Date, Price up, Price down-->
-    <!--Target... Radius... 1, 2, 3, 4, 5, 7, 10, 20, 30, 60, 100, 200, 300, 400, 500, 1000, everywhere-->
-    <!--Flag... search only in my country true/false-->
-    <!--Point... Current location -> map-->
-    <!--Brand... Choose category... All, Fashion, Electronics, Sport, Cars, Services, New, Home, Baby, Movies, Property, Other-->
-    <!--Card... Set your price range... min->max-->
+    </section>
+    <!-- SUBMIT -->
+    <div class="search-details-divider"></div>
     <div class="row">
-      <div class="col-12">
+      <div class="col-12 text-center">
         <button type="submit">Apply</button>
       </div>
     </div>

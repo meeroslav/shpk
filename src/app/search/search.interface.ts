@@ -4,8 +4,16 @@ export enum SearchListedIn {
   '3d' = '3d',
   '7d' = '7d',
   '30d' = '30d',
-  'Forever' = ''
+  'Forever' = 'Forever'
 }
+
+export const SearchListenInLast = [
+  SearchListedIn['24h'],
+  SearchListedIn['3d'],
+  SearchListedIn['7d'],
+  SearchListedIn['30d'],
+  SearchListedIn['Forever']
+];
 
 export class GPSLocation {
   latitude = 48.23261;
@@ -14,7 +22,7 @@ export class GPSLocation {
 
 // sort search records by
 export enum SearchSortBy {
-  Distance = '',
+  Distance = 'Distance',
   Date = 'Date',
   PriceAsc = 'PriceAsc',
   PriceDesc = 'PriceDesc'
@@ -58,7 +66,7 @@ export class SearchModel implements ISearchModel {
   search = '';
   listedIn = SearchListedIn.Forever;
   sortBy = SearchSortBy.Distance;
-  categories = [];
+  categories = null;
   radius = 1;
   onlyMyCountry = false;
   latitude: number;

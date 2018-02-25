@@ -1,0 +1,68 @@
+@font-face {
+  font-family: 'icomoon';
+  src:  url('fonts/icomoon.eot?jjaxek');
+  src:  url('fonts/icomoon.eot?jjaxek#iefix') format('embedded-opentype'),
+    url('fonts/icomoon.ttf?jjaxek') format('truetype'),
+    url('fonts/icomoon.woff?jjaxek') format('woff'),
+    url('fonts/icomoon.svg?jjaxek#icomoon') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+[class^="icon-"], [class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-dinosaur:before {
+  content: "\e904";
+}
+.icon-egg:before {
+  content: "\e903";
+}
+.icon-swap:before {
+  content: "\e8d5";
+}
+.icon-calendar:before {
+  content: "\e900";
+}
+.icon-wallet:before {
+  content: "\e901";
+}
+.icon-home:before {
+  content: "\e902";
+}
+.icon-brand:before {
+  content: "\e935";
+}
+.icon-location:before {
+  content: "\e947";
+}
+.icon-search:before {
+  content: "\e986";
+}
+.icon-earth:before {
+  content: "\e9ca";
+}
+.icon-flag:before {
+  content: "\e9cc";
+}
+.icon-circle-up:before {
+  content: "\ea41";
+}
+.icon-circle-down:before {
+  content: "\ea43";
+}
+.icon-radio-checked:before {
+  content: "\ea54";
+}

@@ -1,20 +1,53 @@
+@import '../../styles/variables';
+
 :host {
   position: relative;
   display: block;
-
-  border: 2px solid tomato;
 }
 
 input[type=search] {
   width: 100%;
+  border: none;
+  padding: 0;
+}
+
+input[type=number] {
+  width: 100%;
+}
+
+section {
+  margin-left: $spacer * 2;
+}
+
+.search-block {
+  border: 1px solid $shpk-border-color;
+  background: $shpk-inverted-background;
+  padding: $spacer;
 }
 
 .search-details {
   position: absolute;
+  padding: $spacer;
+  background: $shpk-inverted-background;
+}
 
-  background: tomato;
+.search-details-divider {
+  border-top: 1px solid $shpk-border-color;
+  margin: $spacer 0;
+}
+
+.helper-icon {
+  color: $shpk-inverted-foreground;
 }
 
 agm-map {
   height: 10rem;
+}
+
+mat-slider {
+  padding: 0;
+}
+.mat-slider-horizontal {
+  height: 2rem;
+  margin-top: -1rem;
 }

@@ -1,5 +1,8 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { GPSLocation, ISearchModel, SearchCategory, SearchModel, SearchSortBy } from './search.interface';
+import {
+  GPSLocation, ISearchModel, SearchCategory, SearchListedIn, SearchListenInLast, SearchModel, SearchRadius,
+  SearchSortBy
+} from './search.interface';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
@@ -11,13 +14,17 @@ import { of } from 'rxjs/observable/of';
 })
 export class SearchComponent implements OnInit {
   @Output() result: EventEmitter<Partial<ISearchModel>>;
-  @Input('search') inputModel: Partial<ISearchModel>;
+  @Input() inputModel: Partial<ISearchModel>;
 
   protected searchForm: FormGroup;
   protected showDetails: boolean;
 
   protected allCategories = Object.keys(SearchCategory).map(c => SearchCategory[c]);
-  protected allSortTypes = Object.keys(SearchSortBy).map(s => SearchSortBy[s]);
+  protected sortType = SearchSortBy;
+  protected listedInMax = Object.keys(SearchListedIn).length - 1;
+  protected listedInArray = SearchListenInLast;
+  protected radiusMax = SearchRadius.length - 1;
+  protected radiusArray = SearchRadius;
 
   private location: GPSLocation;
 
@@ -51,7 +58,7 @@ export class SearchComponent implements OnInit {
   private initializeForm(model: Partial<ISearchModel>) {
     this.searchForm = this.formBuilder.group({
       search: [model.search],
-      listedIn: [model.listedIn],
+      listedIn: [SearchListenInLast.indexOf(model.listedIn)],
       sortBy: [model.sortBy],
       categories: this.formBuilder.group(
         Object.assign({},
@@ -60,7 +67,7 @@ export class SearchComponent implements OnInit {
             [c]: [this.getCategoryValue(SearchCategory[c], model.categories || [])]
           })))
       ),
-      radius: [model.radius],
+      radius: [SearchRadius.indexOf(model.radius)],
       onlyMyCountry: [model.onlyMyCountry],
       latitude: [model.latitude],
       longitude: [model.longitude],
@@ -70,9 +77,38 @@ export class SearchComponent implements OnInit {
   }
 
   private setFormListeners() {
-    this.searchForm.controls.search.valueChanges.subscribe(e => {
+    this.searchForm.controls.search.valueChanges.subscribe(() => {
       this.showDetails = true;
     });
+
+    this.setCategoryValueChangeListeners();
+  }
+
+  private setCategoryValueChangeListeners() {
+    const categoryControls = this.searchForm.controls.categories['controls'];
+    Object.keys(categoryControls)
+      .forEach(key => {
+        categoryControls[key].valueChanges.subscribe(value => {
+          if (value) {
+            if (key === SearchCategory.All) {
+              // deselect all others
+              Object.keys(categoryControls)
+                .filter(k => k !== SearchCategory.All)
+                .forEach(k => categoryControls[k].setValue(false));
+            } else {
+              // deselect 'All'
+              categoryControls[SearchCategory.All].setValue(false);
+            }
+          } else {
+            // none is selected -> select All
+            if (Object.keys(categoryControls)
+                .reduce((acc, cur) => acc + +categoryControls[cur].value, 0) === 0) {
+              // select 'All'
+              categoryControls[SearchCategory.All].setValue(true);
+            }
+          }
+        });
+      });
   }
 
   /**
