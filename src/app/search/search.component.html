@@ -74,7 +74,10 @@
       <div class="col-12">
         <agm-map
           [latitude]="searchForm.controls['latitude'].value"
-          [longitude]="searchForm.controls['longitude'].value">
+          [longitude]="searchForm.controls['longitude'].value"
+          [zoomControl]="false"
+          [zoom]="12"
+        >
           <agm-marker
             [latitude]="searchForm.controls['latitude'].value"
             [longitude]="searchForm.controls['longitude'].value"
@@ -84,7 +87,7 @@
           </agm-marker>
           <agm-circle [latitude]="searchForm.controls['latitude'].value"
                       [longitude]="searchForm.controls['longitude'].value"
-                      [radius]="searchForm.controls['radius'].value * 1000"
+                      [radius]="radiusArray[searchForm.controls['radius'].value] * 1000"
                       [fillColor]="'#4ab765'">
           </agm-circle>
         </agm-map>
@@ -112,11 +115,11 @@
     </div>
     <section class="row">
       <div class="col-6">
-        <input formControlName="minPrice" type="number"
+        <input formControlName="minPrice" type="number" min="0"
              placeholder="{{ 'MIN_PRICE' | translate }}"/>
       </div>
       <div class="col-6">
-        <input formControlName="maxPrice" type="number"
+        <input formControlName="maxPrice" type="number" min="0"
              placeholder="{{ 'MAX_PRICE' | translate }}"/>
       </div>
     </section>
