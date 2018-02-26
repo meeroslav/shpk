@@ -25,6 +25,7 @@ export class SearchComponent implements OnInit {
   protected listedInArray = SearchListenInLast;
   protected radiusMax = SearchRadius.length - 1;
   protected radiusArray = SearchRadius;
+  protected zoom: number;
 
   private location: GPSLocation;
 
@@ -74,11 +75,31 @@ export class SearchComponent implements OnInit {
       minPrice: [model.minPrice],
       maxPrice: [model.maxPrice]
     });
+    this.zoom = this.calculateZoom(model.radius);
+  }
+
+  private calculateZoom(radius: number): number {
+    if (!radius) {
+      return 3;
+    }
+    let zoom = 12;
+    let step = 1.25;
+    while (step < radius) {
+      step = step * 2;
+      zoom--;
+    }
+    return zoom;
   }
 
   private setFormListeners() {
+    // pull down search details on search input change
     this.searchForm.controls.search.valueChanges.subscribe(() => {
       this.showDetails = true;
+    });
+
+    // calculate new zoom on radius change
+    this.searchForm.controls.radius.valueChanges.subscribe(val => {
+      this.zoom = this.calculateZoom(SearchRadius[val]);
     });
 
     this.setCategoryValueChangeListeners();

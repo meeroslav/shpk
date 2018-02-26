@@ -77,14 +77,12 @@
           [longitude]="searchForm.controls['longitude'].value"
           [zoomControl]="false"
           [streetViewControl]="false"
-          [zoom]="12"
-        >
+          [zoom]="zoom">
           <agm-marker
             [latitude]="searchForm.controls['latitude'].value"
             [longitude]="searchForm.controls['longitude'].value"
             [markerDraggable]="true"
-            (dragEnd)="markerDragEnd($event)"
-          >
+            (dragEnd)="markerDragEnd($event)">
           </agm-marker>
           <agm-circle [latitude]="searchForm.controls['latitude'].value"
                       [longitude]="searchForm.controls['longitude'].value"
