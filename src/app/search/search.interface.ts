@@ -66,7 +66,7 @@ export class SearchModel implements ISearchModel {
   search = '';
   listedIn = SearchListedIn.Forever;
   sortBy = SearchSortBy.Distance;
-  categories = null;
+  categories = [SearchCategory.All];
   radius = 1;
   onlyMyCountry = false;
   latitude: number;

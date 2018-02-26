@@ -28,6 +28,7 @@ export class SearchComponent implements OnInit {
   protected zoom: number;
 
   private location: GPSLocation;
+  private defaultModel: Partial<ISearchModel>;
 
   constructor(private formBuilder: FormBuilder) {
     this.result = new EventEmitter<Partial<ISearchModel>>();
@@ -36,8 +37,9 @@ export class SearchComponent implements OnInit {
   ngOnInit() {
     this.getLocation().subscribe((location: GPSLocation) => {
       this.location = location;
+      this.defaultModel = new SearchModel(location.latitude, location.longitude);
 
-      const model = this.inputModel || new SearchModel(location.latitude, location.longitude);
+      const model = this.inputModel || this.defaultModel;
       this.initializeForm(model);
       this.setFormListeners();
     });
@@ -46,10 +48,29 @@ export class SearchComponent implements OnInit {
   onSubmit() {
     if (this.searchForm.valid) {
       const formValue = this.searchForm.value;
-      this.showDetails = false;
+      const selectedCategories = Object
+        .keys(formValue.categories)
+        .filter(key => formValue.categories[key]);
 
-      this.result.next(formValue);
-      console.log(formValue);
+      const result = {
+        ...formValue,
+        ...{ listedIn: SearchListenInLast[formValue.listedIn] },
+        ...{ radius: SearchRadius[formValue.radius] || 'Everywhere' },
+        ...{ categories: selectedCategories }
+      };
+
+      // send it to parent component
+      this.result.next(result);
+      // tslint:disable-next-line
+      console.log('Full form: ', result);
+      // tslint:disable-next-line
+      console.log('Delta for url/api:', {
+        ...this.getObjectDelta(this.defaultModel, result),
+        ...{ latitude: result.latitude, longitude: result.longitude }
+      });
+
+      // hide details
+      this.showDetails = false;
     }
   }
 
@@ -78,6 +99,19 @@ export class SearchComponent implements OnInit {
       maxPrice: [model.maxPrice, Validators.min(0)]
     });
     this.zoom = this.calculateZoom(model.radius);
+  }
+
+  private getObjectDelta<T>(src: T, dest: T): Partial<T> {
+    const delta: Partial<T> = {};
+
+    for (const prop in src) {
+      if (src.hasOwnProperty(prop) &&
+        src[prop].toString() !== dest[prop].toString() ) {
+        delta[prop] = dest[prop];
+      }
+    }
+
+    return delta;
   }
 
   private calculateZoom(radius: number): number {
