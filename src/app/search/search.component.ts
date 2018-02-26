@@ -3,7 +3,7 @@ import {
   GPSLocation, ISearchModel, SearchCategory, SearchListedIn, SearchListenInLast, SearchModel, SearchRadius,
   SearchSortBy
 } from './search.interface';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
 
@@ -44,14 +44,16 @@ export class SearchComponent implements OnInit {
   }
 
   onSubmit() {
-    const formValue = this.searchForm.value;
-    this.showDetails = false;
+    if (this.searchForm.valid) {
+      const formValue = this.searchForm.value;
+      this.showDetails = false;
 
-    this.result.next(formValue);
+      this.result.next(formValue);
+      console.log(formValue);
+    }
   }
 
   markerDragEnd(event: { coords: { lat: number, lng: number } }) {
-    console.log(event);
     this.searchForm.controls.longitude.setValue(event.coords.lng);
     this.searchForm.controls.latitude.setValue(event.coords.lat);
   }
@@ -72,8 +74,8 @@ export class SearchComponent implements OnInit {
       onlyMyCountry: [model.onlyMyCountry],
       latitude: [model.latitude],
       longitude: [model.longitude],
-      minPrice: [model.minPrice],
-      maxPrice: [model.maxPrice]
+      minPrice: [model.minPrice, Validators.min(0)],
+      maxPrice: [model.maxPrice, Validators.min(0)]
     });
     this.zoom = this.calculateZoom(model.radius);
   }

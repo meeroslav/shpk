@@ -1,4 +1,5 @@
 @import '../../node_modules/@angular/material/theming';
+@import './variables';
 
 @include mat-core();
 
@@ -33,9 +34,17 @@ button {
   border: 1px solid $shpk-border-color;
   color: $shpk-foreground;
   padding: $spacer;
+
+  &[disabled] {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 }
 
 input {
   border: 1px solid $shpk-border-color;
   padding: $spacer / 2;
+}
+input.ng-invalid {
+  border-color: $shpk-error-color;
 }
