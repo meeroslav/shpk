@@ -131,3 +131,7 @@
     </div>
   </div>
 </form>
+<mat-progress-spinner
+  class="search-spinner" *ngIf="!searchForm"
+  mode="indeterminate" value="100" color="primary">
+</mat-progress-spinner>

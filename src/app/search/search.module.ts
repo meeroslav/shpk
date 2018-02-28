@@ -4,7 +4,10 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { TranslateModule } from '@ngx-translate/core';
 import { AgmCoreModule } from '@agm/core';
-import { MatCheckboxModule, MatRadioModule, MatSliderModule, MatSlideToggleModule } from '@angular/material';
+import {
+  MatCheckboxModule, MatProgressSpinnerModule, MatRadioModule, MatSliderModule,
+  MatSlideToggleModule
+} from '@angular/material';
 
 @NgModule({
   declarations: [SearchComponent],
@@ -17,6 +20,7 @@ import { MatCheckboxModule, MatRadioModule, MatSliderModule, MatSlideToggleModul
     MatCheckboxModule,
     MatSlideToggleModule,
     MatSliderModule,
+    MatProgressSpinnerModule,
     AgmCoreModule.forRoot({
       apiKey: 'AIzaSyA1pHAjoFsuqlZxmPOXMOhrWXfzyqrvr8E'
     })
