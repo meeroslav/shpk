@@ -15,11 +15,6 @@ export const SearchListenInLast = [
   SearchListedIn['Forever']
 ];
 
-export class GPSLocation {
-  latitude = 48.23261;
-  longitude = 16.413773;
-}
-
 // sort search records by
 export enum SearchSortBy {
   Distance = 'Distance',

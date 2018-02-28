@@ -8,6 +8,7 @@ import {
   MatCheckboxModule, MatProgressSpinnerModule, MatRadioModule, MatSliderModule,
   MatSlideToggleModule
 } from '@angular/material';
+import { SharedModule } from '../shared/shared.module';
 
 @NgModule({
   declarations: [SearchComponent],
@@ -16,6 +17,7 @@ import {
     ReactiveFormsModule,
     BrowserAnimationsModule,
     TranslateModule,
+    SharedModule,
     MatRadioModule,
     MatCheckboxModule,
     MatSlideToggleModule,

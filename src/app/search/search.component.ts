@@ -1,11 +1,11 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import {
-  GPSLocation, ISearchModel, SearchCategory, SearchListedIn, SearchListenInLast, SearchModel, SearchRadius,
+  ISearchModel, SearchCategory, SearchListedIn, SearchListenInLast, SearchModel, SearchRadius,
   SearchSortBy
 } from './search.interface';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs/Observable';
-import { of } from 'rxjs/observable/of';
+import { GeoLocationService, GPSLocation } from '../shared/geo-location';
+import { HelperService } from '../shared/helper.service';
 
 @Component({
   selector: 'app-search',
@@ -30,12 +30,16 @@ export class SearchComponent implements OnInit {
   private location: GPSLocation;
   private defaultModel: Partial<ISearchModel>;
 
-  constructor(private formBuilder: FormBuilder) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private geoLocationService: GeoLocationService,
+    private helper: HelperService
+  ) {
     this.result = new EventEmitter<Partial<ISearchModel>>();
   }
 
   ngOnInit() {
-    this.getLocation().subscribe((location: GPSLocation) => {
+    this.geoLocationService.getLocation().subscribe((location: GPSLocation) => {
       this.location = location;
       this.defaultModel = new SearchModel(location.latitude, location.longitude);
 
@@ -48,6 +52,8 @@ export class SearchComponent implements OnInit {
   onSubmit() {
     if (this.searchForm.valid) {
       const formValue = this.searchForm.value;
+
+      // process categories
       const selectedCategories = Object
         .keys(formValue.categories)
         .filter(key => formValue.categories[key]);
@@ -61,11 +67,12 @@ export class SearchComponent implements OnInit {
 
       // send it to parent component
       this.result.next(result);
+
       // tslint:disable-next-line
       console.log('Full form: ', result);
       // tslint:disable-next-line
       console.log('Delta for url/api:', {
-        ...this.getObjectDelta(this.defaultModel, result),
+        ...this.helper.getObjectDelta(this.defaultModel, result),
         ...{ latitude: result.latitude, longitude: result.longitude }
       });
 
@@ -79,17 +86,23 @@ export class SearchComponent implements OnInit {
     this.searchForm.controls.latitude.setValue(event.coords.lat);
   }
 
+  /**
+   * Initialize form instance
+   * @param {Partial<ISearchModel>} model
+   */
   private initializeForm(model: Partial<ISearchModel>) {
     this.searchForm = this.formBuilder.group({
       search: [model.search],
       listedIn: [SearchListenInLast.indexOf(model.listedIn)],
       sortBy: [model.sortBy],
       categories: this.formBuilder.group(
-        Object.assign({},
+        Object.assign(
+          {},
           // generate controls from all categories
           ...Object.keys(SearchCategory).map(c => ({
             [c]: [this.getCategoryValue(SearchCategory[c], model.categories || [])]
-          })))
+          }))
+        )
       ),
       radius: [SearchRadius.indexOf(model.radius)],
       onlyMyCountry: [model.onlyMyCountry],
@@ -101,19 +114,11 @@ export class SearchComponent implements OnInit {
     this.zoom = this.calculateZoom(model.radius);
   }
 
-  private getObjectDelta<T>(src: T, dest: T): Partial<T> {
-    const delta: Partial<T> = {};
-
-    for (const prop in src) {
-      if (src.hasOwnProperty(prop) &&
-        src[prop].toString() !== dest[prop].toString() ) {
-        delta[prop] = dest[prop];
-      }
-    }
-
-    return delta;
-  }
-
+  /**
+   * Calculate level of zoom of GoogleMap based on radius in km
+   * @param {number} radius
+   * @returns {number}
+   */
   private calculateZoom(radius: number): number {
     if (!radius) {
       return 3;
@@ -127,6 +132,9 @@ export class SearchComponent implements OnInit {
     return zoom;
   }
 
+  /**
+   * Detect changes in form and react accordingly
+   */
   private setFormListeners() {
     // pull down search details on search input change
     this.searchForm.controls.search.valueChanges.subscribe(() => {
@@ -141,50 +149,37 @@ export class SearchComponent implements OnInit {
     this.setCategoryValueChangeListeners();
   }
 
+  /**
+   * Listen to category changes and select/deselect values accordingly
+   * - When 'All' is selected -> other should be deselected
+   * - When other than 'All is selected -> 'All' should be deselected
+   * - When none is selected -> 'All' should be reselected
+   */
   private setCategoryValueChangeListeners() {
     const categoryControls = this.searchForm.controls.categories['controls'];
-    Object.keys(categoryControls)
-      .forEach(key => {
-        categoryControls[key].valueChanges.subscribe(value => {
-          if (value) {
-            if (key === SearchCategory.All) {
-              // deselect all others
-              Object.keys(categoryControls)
-                .filter(k => k !== SearchCategory.All)
-                .forEach(k => categoryControls[k].setValue(false));
-            } else {
-              // deselect 'All'
-              categoryControls[SearchCategory.All].setValue(false);
-            }
+    Object.keys(categoryControls).forEach(key => {
+      categoryControls[key].valueChanges.subscribe((checked: boolean) => {
+        // if selected
+        if (checked) {
+          // if we selected 'All'
+          if (key === SearchCategory.All) {
+            // deselect all others
+            Object.keys(categoryControls)
+              .filter(k => k !== SearchCategory.All)
+              .forEach(k => categoryControls[k].setValue(false));
           } else {
-            // none is selected -> select All
-            if (Object.keys(categoryControls)
-                .reduce((acc, cur) => acc + +categoryControls[cur].value, 0) === 0) {
-              // select 'All'
-              categoryControls[SearchCategory.All].setValue(true);
-            }
+            // deselect 'All'
+            categoryControls[SearchCategory.All].setValue(false);
           }
-        });
+        } else {
+          // none is selected -> select All
+          if (Object.keys(categoryControls)
+              .reduce((acc, cur) => acc + +categoryControls[cur].value, 0) === 0) {
+            categoryControls[SearchCategory.All].setValue(true);
+          }
+        }
       });
-  }
-
-  /**
-   * Get browser location or return default one
-   * @returns {Observable<GPSLocation>}
-   */
-  private getLocation(): Observable<GPSLocation> {
-    if (navigator.geolocation) {
-      return new Observable<GPSLocation>(observer => {
-        navigator.geolocation.getCurrentPosition(pos => {
-          observer.next(pos.coords);
-          observer.complete();
-        }, () => {
-          observer.next(new GPSLocation());
-          observer.complete();
-        });
-      });
-    }
-    return of(new GPSLocation());
+    });
   }
 
   /**
