@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import {
   ISearchModel, SearchCategory, SearchListedIn, SearchListenInLast, SearchModel, SearchRadius,
   SearchSortBy
@@ -6,13 +6,15 @@ import {
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GeoLocationService, GPSLocation } from '../shared/geo-location';
 import { HelperService } from '../shared/helper.service';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs/Subject';
 
 @Component({
   selector: 'app-search',
   styleUrls: ['./search.component.scss'],
   templateUrl: './search.component.html'
 })
-export class SearchComponent implements OnInit {
+export class SearchComponent implements OnInit, OnDestroy {
   @Output() result: EventEmitter<Partial<ISearchModel>>;
   @Input() inputModel: Partial<ISearchModel>;
 
@@ -29,24 +31,51 @@ export class SearchComponent implements OnInit {
 
   private location: GPSLocation;
   private defaultModel: Partial<ISearchModel>;
+  private locationSet$: Subject<any>;
 
+  /**
+   * CTOR
+   * @param {FormBuilder} formBuilder
+   * @param {GeoLocationService} geoLocationService
+   * @param {HelperService} helper
+   */
   constructor(
     private formBuilder: FormBuilder,
     private geoLocationService: GeoLocationService,
     private helper: HelperService
   ) {
     this.result = new EventEmitter<Partial<ISearchModel>>();
+    this.locationSet$ = new Subject();
   }
 
+  /**
+   * Initialize model and form elements
+   */
   ngOnInit() {
-    this.geoLocationService.getLocation().subscribe((location: GPSLocation) => {
-      this.location = location;
-      this.defaultModel = new SearchModel(location.latitude, location.longitude);
+    // set temporarily default geo location
+    this.location = new GPSLocation();
+    this.defaultModel = new SearchModel(this.location.latitude, this.location.longitude);
 
-      const model = this.inputModel || this.defaultModel;
-      this.initializeForm(model);
-      this.setFormListeners();
-    });
+    const model = this.inputModel || this.defaultModel;
+    this.initializeForm(model);
+    this.setFormListeners();
+
+    // get exact geo location
+    this.geoLocationService.getLocation()
+      .pipe(
+        takeUntil(this.locationSet$)
+      )
+      .subscribe((location: GPSLocation) => {
+        this.location = location;
+        this.defaultModel.longitude = location.longitude;
+        this.defaultModel.latitude = location.latitude;
+        this.markerDragEnd({ coords: { lat: location.latitude, lng: location.longitude } });
+      });
+  }
+
+  ngOnDestroy() {
+    this.locationSet$.next();
+    this.locationSet$.complete();
   }
 
   onSubmit() {
@@ -84,6 +113,10 @@ export class SearchComponent implements OnInit {
   markerDragEnd(event: { coords: { lat: number, lng: number } }) {
     this.searchForm.controls.longitude.setValue(event.coords.lng);
     this.searchForm.controls.latitude.setValue(event.coords.lat);
+
+    // make sure we are not waiting for geo location
+    // once value has been set manually
+    this.locationSet$.next();
   }
 
   /**
