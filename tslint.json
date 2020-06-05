@@ -85,11 +85,6 @@
       "severity": "warn"
     },
     "eofline": true,
-    "import-blacklist": [
-      true,
-      "rxjs",
-      "rxjs/Rx"
-    ],
 
     "object-curly-spacing": [true, "always"],
 

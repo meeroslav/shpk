@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GeoLocationService, GPSLocation } from '../shared/geo-location';
 import { HelperService } from '../shared/helper.service';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs/Subject';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-search',
@@ -18,16 +18,16 @@ export class SearchComponent implements OnInit, OnDestroy {
   @Output() result: EventEmitter<Partial<ISearchModel>>;
   @Input() inputModel: Partial<ISearchModel>;
 
-  protected searchForm: FormGroup;
-  protected showDetails: boolean;
+  searchForm: FormGroup;
+  showDetails: boolean;
 
-  protected allCategories = Object.keys(SearchCategory).map(c => SearchCategory[c]);
-  protected sortType = SearchSortBy;
-  protected listedInMax = Object.keys(SearchListedIn).length - 1;
-  protected listedInArray = SearchListenInLast;
-  protected radiusMax = SearchRadius.length - 1;
-  protected radiusArray = SearchRadius;
-  protected zoom: number;
+  allCategories = Object.keys(SearchCategory).map(c => SearchCategory[c]);
+  sortType = SearchSortBy;
+  listedInMax = Object.keys(SearchListedIn).length - 1;
+  listedInArray = SearchListenInLast;
+  radiusMax = SearchRadius.length - 1;
+  radiusArray = SearchRadius;
+  zoom: number;
 
   private location: GPSLocation;
   private defaultModel: Partial<ISearchModel>;

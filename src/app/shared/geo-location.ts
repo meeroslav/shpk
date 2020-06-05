@@ -1,5 +1,4 @@
-import { of } from 'rxjs/observable/of';
-import { Observable } from 'rxjs/Observable';
+import { Observable, of } from 'rxjs';
 
 const DEFAULT_LATITUDE = 48.23261;
 const DEFAULT_LONGITUDE = 48.23261;

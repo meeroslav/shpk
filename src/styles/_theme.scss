@@ -16,8 +16,10 @@ $custom-theme: mat-light-theme($custom-theme-primary, $custom-theme-accent, $cus
 @include angular-material-theme($custom-theme);
 @include custom-theme($custom-theme);
 
+$config: mat-typography-config();
+
 html {
-  font-family: $mat-font-family;
+  font-family: mat-font-family($config);
 }
 
 /********************************
